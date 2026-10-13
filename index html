@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Тест Генераторы</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --correct: #16a34a;
+            --correct-bg: #dcfce7;
+            --wrong: #dc2626;
+            --wrong-bg: #fee2e2;
+            --radius: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* Мобильді экран контейнері */
+        .mobile-container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--card-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        /* Жоғарғы Навигация */
+        header {
+            background: var(--card-bg);
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            color: var(--primary);
+        }
+
+        /* Төменгі Навигация Бары */
+        .nav-bar {
+            display: flex;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border);
+            position: sticky;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin-top: auto;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-btn.active {
+            color: var(--primary);
+        }
+
+        /* Негізгі контент */
+        main {
+            padding: 16px;
+            flex: 1;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Енгізу формалары */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+            background: #f8fafc;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            border-color: var(--primary);
+            background: #fff;
+        }
+
+        /* Сұрақ карточкалары */
+        .q-card {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+
+        .option-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .option-row input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+        }
+
+        /* Батырмалар */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn:active {
+            opacity: 0.8;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        /* Викторина сұрақтарын көрсету */
+        .quiz-option {
+            background: #f8fafc;
+            border: 2px solid var(--border);
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+        }
+
+        .quiz-option.correct {
+            background: var(--correct-bg);
+            border-color: var(--correct);
+            color: var(--correct);
+        }
+
+        .quiz-option.wrong {
+            background: var(--wrong-bg);
+            border-color: var(--wrong);
+            color: var(--wrong);
+        }
+
+        /* Нәтиже карточкасы */
+        .result-card {
+            text-align: center;
+            padding: 30px 10px;
+        }
+
+        .result-score {
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="mobile-container">
+    <header>
+        <h1 id="app-title">Тест Құрастыру</h1>
+    </header>
+
+    <main>
+        <!-- 1. ТЕСТ КҰРАСТЫРУ БӨЛІМІ -->
+        <section id="tab-create">
+            <div class="form-group">
+                <label for="quiz-title">Тест/Тақырып аты</label>
+                <input type="text" id="quiz-title" placeholder="Мұсалы: 7-сынып. Физика">
+            </div>
+
+            <div id="questions-list">
+                <!-- Сұрақтар осы жерге қосылады -->
+            </div>
+
+            <button class="btn btn-outline" onclick="addQuestionField()">+ Сұрақ қосу</button>
+            <button class="btn btn-primary" onclick="saveQuiz()">Тестті сақтау</button>
+        </section>
+
+        <!-- 2. ТЕСТ ӨТУ БӨЛІМІ -->
+        <section id="tab-play" class="hidden">
+            <div id="quiz-start-view">
+                <p style="text-align: center; color: var(--text-muted); margin-top: 40px;">
+                    Тестті бастау үшін төмендегі батырманы басыңыз.
+                </p>
+                <button class="btn btn-primary" onclick="startQuiz()" style="margin-top: 20px;">Тестті бастау</button>
+            </div>
+
+            <div id="quiz-active-view" class="hidden">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px; color: var(--text-muted); font-size: 13px;">
+                    <span id="quiz-progress">Сұрақ 1/1</span>
+                    <span id="quiz-score-live">Ұпай: 0</span>
+                </div>
+                
+                <h3 id="question-text" style="margin-bottom: 16px; font-size: 17px;">-</h3>
+                <div id="options-container"></div>
+            </div>
+
+            <div id="quiz-result-view" class="result-card hidden">
+                <h2>Аяқталды!</h2>
+                <div class="result-score" id="final-score">0 / 0</div>
+                <p id="result-text" style="color: var(--text-muted); margin-bottom: 20px;">-</p>
+                <button class="btn btn-primary" onclick="startQuiz()">Қайта өту</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Төменгі Навигация -->
+    <nav class="nav-bar">
+        <button class="nav-btn active" id="btn-tab-create" onclick="switchTab('create')">
+            <span>✏️</span>
+            <span>Құрастыру</span>
+        </button>
+        <button class="nav-btn" id="btn-tab-play" onclick="switchTab('play')">
+            <span>▶️</span>
+            <span>Тест өту</span>
+        </button>
+    </nav>
+</div>
+
+<script>
+    let questionsCount = 0;
+    let quizData = null;
+
+    let currentQIndex = 0;
+    let score = 0;
+
+    // Бастапқыда 1 сұрақ өрісін қосамыз
+    window.onload = () => {
+        addQuestionField();
+    };
+
+    function switchTab(tab) {
+        const createTab = document.getElementById('tab-create');
+        const playTab = document.getElementById('tab-play');
+        const btnCreate = document.getElementById('btn-tab-create');
+        const btnPlay = document.getElementById('btn-tab-play');
+        const title = document.getElementById('app-title');
+
+        if (tab === 'create') {
+            createTab.classList.remove('hidden');
+            playTab.classList.add('hidden');
+            btnCreate.classList.add('active');
+            btnPlay.classList.remove('active');
+            title.innerText = "Тест Құрастыру";
+        } else {
+            if (!quizData) {
+                alert("Әлі тест құрастырылмады!");
+                return;
+            }
+            createTab.classList.add('hidden');
+            playTab.classList.remove('hidden');
+            btnCreate.classList.remove('active');
+            btnPlay.classList.add('active');
+            title.innerText = quizData.title;
+        }
+    }
+
+    function addQuestionField() {
+        questionsCount++;
+        const container = document.getElementById('questions-list');
+        const qDiv = document.createElement('div');
+        qDiv.className = 'q-card';
+        qDiv.id = `q-card-${questionsCount}`;
+
+        qDiv.innerHTML = `
+            <div class="form-group" style="margin-bottom: 8px;">
+                <label>Сұрақ №${questionsCount}</label>
+                <input type="text" class="q-input" placeholder="Сұрақты енгізіңіз">
+            </div>
+            <label style="margin-top: 8px;">Жауаптар (Дұрыс жауапты белгілеңіз):</label>
+            <div class="option-row">
+                <input type="radio" name="correct-${questionsCount}" value="0" checked>
+                <input type="text" class="opt-input" placeholder="А нұсқасы">
+            </div>
+            <div class="option-row">
+                <input type="radio" name="correct-${questionsCount}" value="1">
+                <input type="text" class="opt-input" placeholder="В нұсқасы">
+            </div>
+            <div class="option-row">
+                <input type="radio" name="correct-${questionsCount}" value="2">
+                <input type="text" class="opt-input" placeholder="С нұсқасы">
+            </div>
+        `;
+        container.appendChild(qDiv);
+    }
+
+    function saveQuiz() {
+        const title = document.getElementById('quiz-title').value.trim();
+        if (!title) {
+            alert("Тесттің тақырыбын жазыңыз!");
+            return;
+        }
+
+        const cards = document.querySelectorAll('.q-card');
+        const questions = [];
+
+        cards.forEach((card, idx) => {
+            const qText = card.querySelector('.q-input').value.trim();
+            const optionsInputs = card.querySelectorAll('.opt-input');
+            const selectedRadio = card.querySelector(`input[name="correct-${idx + 1}"]:checked`);
+
+            const options = [];
+            optionsInputs.forEach(opt => {
+                if (opt.value.trim()) options.push(opt.value.trim());
+            });
+
+            if (qText && options.length === 3) {
+                questions.push({
+                    question: qText,
+                    options: options,
+                    correct: parseInt(selectedRadio.value)
+                });
+            }
+        });
+
+        if (questions.length === 0) {
+            alert("Кем дегенде 1 толық сұрақ жазыңыз!");
+            return;
+        }
+
+        quizData = { title, questions };
+        alert("Тест сәтті сақталды!");
+        switchTab('play');
+    }
+
+    function startQuiz() {
+        currentQIndex = 0;
+        score = 0;
+
+        document.getElementById('quiz-start-view').classList.add('hidden');
+        document.getElementById('quiz-result-view').classList.add('hidden');
+        document.getElementById('quiz-active-view').classList.remove('hidden');
+
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = quizData.questions[currentQIndex];
+        document.getElementById('quiz-progress').innerText = `Сұрақ ${currentQIndex + 1}/${quizData.questions.length}`;
+        document.getElementById('quiz-score-live').innerText = `Ұпай: ${score}`;
+        document.getElementById('question-text').innerText = q.question;
+
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+
+        q.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'quiz-option';
+            btn.innerText = opt;
+            btn.onclick = () => selectAnswer(idx, btn);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function selectAnswer(selectedIdx, btnElement) {
+        const q = quizData.questions[currentQIndex];
+        const allBtns = document.querySelectorAll('.quiz-option');
+
+        allBtns.forEach(b => b.style.pointerEvents = 'none');
+
+        if (selectedIdx === q.correct) {
+            btnElement.classList.add('correct');
+            score++;
+        } else {
+            btnElement.classList.add('wrong');
+            allBtns[q.correct].classList.add('correct');
+        }
+
+        setTimeout(() => {
+            currentQIndex++;
+            if (currentQIndex < quizData.questions.length) {
+                renderQuestion();
+            } else {
+                showResult();
+            }
+        }, 1000);
+    }
+
+    function showResult() {
+        document.getElementById('quiz-active-view').classList.add('hidden');
+        const resultView = document.getElementById('quiz-result-view');
+        resultView.classList.remove('hidden');
+
+        const total = quizData.questions.length;
+        document.getElementById('final-score').innerText = `${score} / ${total}`;
+
+        const percent = (score / total) * 100;
+        let msg = "";
+        if (percent === 100) msg = "Өте тамаша! Барлық жауап дұрыс! 🌟";
+        else if (percent >= 60) msg = "Жақсы нәтиже! 👍";
+        else msg = "Тақырыпты қайталау керек. 📚";
+
+        document.getElementById('result-text').innerText = msg;
+    }
+</script>
+
+</body>
+</html>
